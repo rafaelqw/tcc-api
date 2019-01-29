@@ -61,8 +61,11 @@ module.exports = (sequelize, DataTypes) => {
         });
         Cliente.hasMany(models.PessoaJuridica, {
             foreignKey: 'id_cliente'
-          });
-      };
+        });
+        Cliente.hasMany(models.Telefone, {
+            foreignKey: 'id_cliente'
+        });
+    };
     
 
     Cliente.getFullData = function() {

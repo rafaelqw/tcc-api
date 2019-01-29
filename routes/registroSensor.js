@@ -17,9 +17,12 @@ router.post('/', function(req, res, next) {
             registro.valor = sensor.valor;
             registro.save();
         });
-
         res.status(201);
         res.send('');
+    }
+    else{
+        res.status(404);
+        res.send('Corpo da requesição vazio');
     }
 });
 

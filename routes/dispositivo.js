@@ -21,6 +21,10 @@ router.post('/', function(req, res, next) {
         res.status(201);
         res.send('');
     }
+    else{
+        res.status(404);
+        res.send('Corpo da requesição vazio');
+    }
 });
 
 // Get Dispositivo

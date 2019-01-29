@@ -4,20 +4,23 @@
     "password": null,
     "database": "tcc_db",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "timezone": "America/Sao_Paulo"
   },
   "test": {
     "username": "root",
     "password": null,
     "database": "tcc_db",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "timezone": "America/Sao_Paulo"
   },
   "production": {
     "username": "root",
     "password": null,
     "database": "tcc_db",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "timezone": "America/Sao_Paulo"
   }
 }

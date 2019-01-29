@@ -3,29 +3,26 @@ var moment = require('moment');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const Telefone = sequelize.define('Telefone', {
+    const Receiver = sequelize.define('Receiver', {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 allowNull: false,
                 autoIncrement: true
             },
-            id_tipo: {
-                type: DataTypes.INTEGER,
+            registration_id: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
-            ddd: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            numero_tel: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            id_cliente: {
+            id_usuario:{
                 type: DataTypes.INTEGER,
-                allowNull: false,
-            },createdAt: {
+                allowNull: true,
+            },
+            flg_notificacao_ativa:{
+                type: DataTypes.INTEGER,
+                allowNull: false, 
+            },
+            createdAt: {
                 type: DataTypes.DATE
             },
             deletedAt: {
@@ -35,21 +32,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE
             }
         }, {
-        paranoid: true,
-        tableName: 'tbl_telefone'
+          paranoid: true,
+          tableName: 'tbl_receiver'
     });
 
-    Telefone.associate = function(models) {
-        Telefone.belongsTo(models.Cliente, {
-            onDelete: "CASCADE",
-            foreignKey: 'id'
-        });
-    };
-
-    Telefone.getFullData = function() {
+    Receiver.getFullData = function() {
     console.log(this, sequelize);
     }
 
-    return Telefone;
+	return Receiver;
 };
 
+	

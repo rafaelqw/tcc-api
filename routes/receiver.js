@@ -6,18 +6,16 @@ var underscore = require("underscore");
 var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
-var Sensor = models.Sensor;
+var Receiver = models.Receiver;
 
-// Create Sensor
+// Create Dispositivo
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        var sensor = req.body.sensor;
-        var registro = new Sensor();
-        registro.nome = sensor.nome;
-        registro.descricao = sensor.descricao;
-        registro.id_tipo_sensor = sensor.id_tipo_sensor;
-        registro.localizacao = sensor.localizacao;
-        registro.id_dispositivo = sensor.id_dispositivo;
+        var receiver = req.body;
+        var registro = new Receiver();
+        registro.registration_id = receiver.registration_id;
+        registro.id_usuario = receiver.id_usuario;
+        registro.flg_notificacao_ativa = receiver.flg_notificacao_ativa;
         registro.save();
         res.status(201);
         res.send('');
@@ -30,7 +28,7 @@ router.post('/', function(req, res, next) {
 
 // Get Dispositivo
 router.get('/', function(req, res, next) {
-    Sensor.findAll().then(items => {
+    Receiver.findAll().then(items => {
 		if(items.length > 0) {
             res.json(items);
         }

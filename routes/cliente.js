@@ -18,7 +18,7 @@ router.post('/', function(req, res, next) {
     }
     else{
         res.status(404);
-        res.send('');
+        res.send('Corpo da requesição vazio');
     }
 });
 
@@ -67,7 +67,20 @@ async function createCliente(res, cliente){
 
 // Get Dispositivo
 router.get('/', function(req, res, next) {
-    Cliente.findAll().then(items => {
+    Cliente.findAll({
+        include: [
+            {
+            model: models.PessoaJuridica,
+            required: false
+            },{
+                model: models.PessoaFisica,
+                required: false
+            },{
+                model: models.Telefone,
+                required: false
+            }
+        ]
+    }).then(items => {
 		if(items.length > 0) {
             res.json(items);
         }
@@ -76,6 +89,26 @@ router.get('/', function(req, res, next) {
             res.send('');
         }
 	});
+});
+
+router.delete('/',function(req, res, next) {
+    Cliente.findById(req.query.id).then(item => {
+        if(item != null){
+            item.destroy({
+                where: {
+                    id: item.id 
+                }
+            }).then(x =>{
+                res.status(200);
+                res.send('');
+            });
+        }
+        else{
+            res.status(404);
+            res.send('');
+        }
+    });
+    
 });
 
 module.exports = router;
