@@ -29,7 +29,7 @@ models.sequelize.sync({force: false}).then(function () {
 	http_server.on('listening', onListening);
 });
 
-console.log('\x1b[32m', '[POSI Digital Printer] API Inicializada com sucesso!');
+console.log('\x1b[32m', '[TCC-API] API Inicializada com sucesso!');
 console.log('\x1b[0m');
 
 /**

@@ -1,25 +1,25 @@
 {
   "development": {
     "username": "root",
-    "password": null,
+    "password": "",
     "database": "tcc_db",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "dialect": "mysql",
     "timezone": "America/Sao_Paulo"
   },
   "test": {
     "username": "root",
-    "password": null,
+    "password": "",
     "database": "tcc_db",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "dialect": "mysql",
     "timezone": "America/Sao_Paulo"
   },
   "production": {
     "username": "root",
-    "password": null,
+    "password": "web@linia123",
     "database": "tcc_db",
-    "host": "127.0.0.1",
+    "host": "186.226.56.5",
     "dialect": "mysql",
     "timezone": "America/Sao_Paulo"
   }

@@ -6,6 +6,7 @@ var cookieParser 	= require('cookie-parser');
 var logger 			= require('morgan');
 
 var indexRouter = require('./routes/index');
+var autenticacaoRouter = require('./routes/autenticacao');
 var accountsRouter = require('./routes/accounts');
 var registroSensorRouter = require('./routes/registroSensor');
 var dispositivoRouter = require('./routes/dispositivo');
@@ -35,10 +36,12 @@ app.use('/sensor', sensorRouter);
 app.use('/empreendimento', empreendimentoRouter);
 app.use('/cliente', clienteRouter);
 app.use('/receiver', receiverRouter);
-
+app.use('/autenticacao', autenticacaoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next(createError(404));
 });
 

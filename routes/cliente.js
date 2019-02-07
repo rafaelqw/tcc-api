@@ -11,6 +11,7 @@ var PessoaFisica = models.PessoaFisica;
 var PessoaJuridica = models.PessoaJuridica;
 var Telefone = models.Telefone;
 
+
 // Create Dispositivo
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){

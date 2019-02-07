@@ -3,7 +3,7 @@ var moment = require('moment');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const Autenticacao = sequelize.define('Auntenticacao', {
+    const Autenticacao = sequelize.define('Autenticacao', {
             email: {
                 type: DataTypes.STRING,
                 primaryKey: true,
