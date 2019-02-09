@@ -21,4 +21,21 @@ router.get('/', function(req, res, next) {
 	});
 });
 
+// Get Municipios
+router.get('/:cod_ibge_estado', function(req, res, next) {
+    Municipio.findAll({
+    	where: {
+    		cod_ibge_estado: req.params.cod_ibge_estado
+    	}
+    }).then(items => {
+		if(items.length > 0) {
+            res.json(items);
+        }
+        else {
+            res.status(404);
+            res.send('');
+        }
+	});
+});
+
 module.exports = router;
