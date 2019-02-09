@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }, {
         paranoid: true,
-        tableName: 'tbl_tipoTelefone'
+        tableName: 'tbl_tipo_telefone'
     });
 
     TipoTelefone.getFullData = function() {

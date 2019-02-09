@@ -28,7 +28,7 @@ async function createCliente(res, cliente){
         var cliente = new Cliente();
         cliente.email = clienteData.email;
         cliente.cep = clienteData.cep;
-        cliente.endereco = clienteData.endereco;
+        cliente.logradouro = clienteData.logradouro;
         cliente.numero = clienteData.numero;
         cliente.bairro = clienteData.bairro;
         cliente.complemento = clienteData.complemento;

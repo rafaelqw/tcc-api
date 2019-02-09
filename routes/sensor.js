@@ -28,7 +28,7 @@ router.post('/', function(req, res, next) {
     }
 });
 
-// Get Dispositivo
+// Get Sensor
 router.get('/', function(req, res, next) {
     Sensor.findAll().then(items => {
 		if(items.length > 0) {

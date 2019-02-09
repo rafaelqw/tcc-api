@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            endereco: {
+            logradouro: {
                 type: DataTypes.STRING,
                 allowNull: true
             },
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            id_cidade: {
+            id_municipio: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },

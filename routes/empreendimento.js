@@ -17,13 +17,13 @@ router.post('/', function(req, res, next) {
         registro.descricao = empreendimento.descricao;
         registro.cnpj = empreendimento.cnpj;
         registro.cep = empreendimento.cep;
-        registro.endereco = empreendimento.endereco;
+        registro.logradouro = empreendimento.logradouro;
         registro.numero = empreendimento.numero;
         registro.bairro = empreendimento.bairro;
         registro.id_estado = empreendimento.id_estado;
-        registro.id_cidade = empreendimento.id_cidade;
+        registro.id_municipio = empreendimento.id_municipio;
         registro.id_segmento = empreendimento.id_segmento;
-        registro.id_nivel = empreendimento.id_nivel;
+        registro.id_porte = empreendimento.id_porte;
         registro.id_cliente = empreendimento.id_cliente;
         registro.save();
 

@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }, {
         paranoid: true,
-        tableName: 'tbl_pessoaJuridica'
+        tableName: 'tbl_pessoa_juridica'
     });
 
     PessoaJuridica.getFullData = function() {

@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            endereco: {
+            logradouro: {
                 type: DataTypes.STRING,
                 allowNull: true, 
             },
@@ -38,11 +38,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            complemento: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
             id_estado: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
-            id_cidade: {
+            id_municipio: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
@@ -50,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
-            id_nivel: {
+            id_porte: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },

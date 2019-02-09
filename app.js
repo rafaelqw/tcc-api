@@ -14,6 +14,8 @@ var sensorRouter = require('./routes/sensor');
 var empreendimentoRouter = require('./routes/empreendimento');
 var clienteRouter = require('./routes/cliente');
 var receiverRouter = require('./routes/receiver');
+var estadoRouter = require('./routes/estado');
+var municipioRouter = require('./routes/municipio');
 
 var app = express();
 
@@ -37,6 +39,8 @@ app.use('/empreendimento', empreendimentoRouter);
 app.use('/cliente', clienteRouter);
 app.use('/receiver', receiverRouter);
 app.use('/autenticacao', autenticacaoRouter);
+app.use('/estado', estadoRouter);
+app.use('/municipio', municipioRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

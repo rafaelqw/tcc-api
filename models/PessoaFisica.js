@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }, {
         paranoid: true,
-        tableName: 'tbl_pessoaFisica'
+        tableName: 'tbl_pessoa_fisica'
     });
 
     PessoaFisica.associate = function(models) {
