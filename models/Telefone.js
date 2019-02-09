@@ -39,13 +39,6 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'tbl_telefone'
     });
 
-    Telefone.associate = function(models) {
-        Telefone.belongsTo(models.Cliente, {
-            onDelete: "CASCADE",
-            foreignKey: 'id'
-        });
-    };
-
     Telefone.getFullData = function() {
     console.log(this, sequelize);
     }

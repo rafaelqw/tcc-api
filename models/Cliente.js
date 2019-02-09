@@ -65,8 +65,13 @@ module.exports = (sequelize, DataTypes) => {
         Cliente.hasMany(models.Telefone, {
             foreignKey: 'id_cliente'
         });
+        Cliente.belongsTo(models.Estado, {
+            foreignKey: 'id_estado'
+        });
+        Cliente.belongsTo(models.Municipio, {
+            foreignKey: 'id_municipio'
+        });
     };
-    
 
     Cliente.getFullData = function() {
     console.log(this, sequelize);

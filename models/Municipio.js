@@ -31,17 +31,7 @@ module.exports = (sequelize, DataTypes) => {
 		paranoid: true,
 		tableName: 'tbl_municipio'
 	});
-
-	Municipio.associate = function(models) {
-		Municipio.hasMany(models.Cliente, {
-			foreignKey: 'id_municipio'
-		});
-		Municipio.hasMany(models.Empreendimento, {
-			foreignKey: 'id_municipio'
-		});
-	};
 	
-
 	Municipio.getFullData = function() {
 		console.log(this, sequelize);
 	}
