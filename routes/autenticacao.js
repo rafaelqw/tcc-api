@@ -25,7 +25,7 @@ async function loginUsuario(res, data){
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
             if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
-                res.status(202).json({'login':true});
+                res.status(202).json({'login':true,'msg':"Logado com Sucesso!"});
             }
             else{
                 res.status(202).json({'login':false,'msg':"Senha inválida!"});
