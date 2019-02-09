@@ -32,19 +32,6 @@ module.exports = (sequelize, DataTypes) => {
 		tableName: 'tbl_estado'
 	});
 
-	Estado.associate = function(models) {
-		Estado.hasMany(models.Cliente, {
-			foreignKey: 'id_estado'
-		});
-		Estado.hasMany(models.Empreendimento, {
-			foreignKey: 'id_estado'
-		});
-		Estado.hasMany(models.Municipio, {
-			foreignKey: 'cod_estado'
-		});
-	};
-	
-
 	Estado.getFullData = function() {
 		console.log(this, sequelize);
 	}

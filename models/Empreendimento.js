@@ -76,6 +76,15 @@ module.exports = (sequelize, DataTypes) => {
           tableName: 'tbl_empreendimento'
     });
 
+    Empreendimento.associate = function(models) {
+        Empreendimento.belongsTo(models.Municipio, {
+            foreignKey: 'cod_ibge'
+        });
+        Empreendimento.belongsTo(models.Estado, {
+            foreignKey: 'cod_ibge'
+        });
+    };
+
     Empreendimento.getFullData = function() {
     console.log(this, sequelize);
     }

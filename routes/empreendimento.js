@@ -8,10 +8,20 @@ var schedule = require('node-schedule');
 var Op = Sequelize.Op;
 var Empreendimento = models.Empreendimento;
 
-// Create RegistroSensor
+// POST Empreendimento
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        var empreendimento = req.body;
+        createEmpreendimento(res,req.body);
+    }
+    else{
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
+    }
+});
+
+// Function POST Empreendimento
+async function createEmpreendimento(res, empreendimento){
+    try {
         var registro = new Empreendimento;
         registro.nome = empreendimento.nome;
         registro.descricao = empreendimento.descricao;
@@ -27,26 +37,62 @@ router.post('/', function(req, res, next) {
         registro.id_cliente = empreendimento.id_cliente;
         registro.save();
 
-        res.status(201);
-        res.send('');
-    }
-    else{
+        res.status(201)
+        res.json({'msg':"Empreendimento criado com sucesso"});
+    } catch (error) {
         res.status(404);
-        res.send('Corpo da requesição vazio');
+        res.json({'msg':"Falha na requisição", 'error': error});  
     }
+}
+
+// GET Empreendimentos
+router.get('/', function(req, res, next) {
+    getEmpreendimento(res);
 });
 
-// Get RegistroSensor
-router.get('/', function(req, res, next) {
-    Empreendimento.findAll().then(items => {
-		if(items.length > 0) {
-            res.json(items);
+// Function GET Empreendimentos
+async function getEmpreendimento(res){
+    try {
+        var Empreendimentos = await Empreendimento.findAll();
+        if(Empreendimentos.length > 0) {
+            res.status(200);
+            res.json(Empreendimentos);
         }
         else {
             res.status(404);
-            res.send('');
+            res.json({'msg':"Nenhum registro encotrado"});
         }
-	});
+    } catch (error) {
+        
+    }
+}
+
+// DELETE Empreendimento
+router.delete('/:id',function(req, res, next) {
+    deleteEmpreendimentosById(res,req.params.id);
 });
 
+// Function DELETE Empreendimento
+async function deleteEmpreendimentosById(res,id){
+    try {
+        var empreendimento = await Empreendimento.findById(id);
+        if(empreendimento){
+            if(empreendimento.destroy({where: {id: empreendimento.id}})){
+                res.status(204);
+                res.json({'msg':"Registro deletado com sucesso"});
+            }
+            else{
+                res.status(404);
+                res.json({'msg':"Falha ao deletar registro"});
+            }
+        }
+        else{
+            res.status(406);
+            res.json({'msg':"Empreendimento não encontrado"}); 
+        }
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
 module.exports = router;

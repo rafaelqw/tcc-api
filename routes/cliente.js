@@ -10,21 +10,25 @@ var Cliente = models.Cliente;
 var PessoaFisica = models.PessoaFisica;
 var PessoaJuridica = models.PessoaJuridica;
 var Telefone = models.Telefone;
+var Estado = models.Estado;
+var Municipio = models.Municipio;
 
 
-// Create Dispositivo
+// POST Create Cliente
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
         createCliente(res, req.body);
     }
     else{
-        res.status(404);
-        res.send('Corpo da requesição vazio');
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
     }
 });
 
+// Function POST Create Cliente
 async function createCliente(res, cliente){
-    var clienteData = cliente;
+    try{
+        var clienteData = cliente;
         var cliente = new Cliente();
         cliente.email = clienteData.email;
         cliente.cep = clienteData.cep;
@@ -33,7 +37,7 @@ async function createCliente(res, cliente){
         cliente.bairro = clienteData.bairro;
         cliente.complemento = clienteData.complemento;
         cliente.id_estado = clienteData.id_estado;
-        cliente.id_cidade = clienteData.id_cidade;
+        cliente.id_municipio = clienteData.id_municipio;
         var clienteSave = await cliente.save();
         if(clienteData.tipo_cadastro == "pf"){
             var pessoaFisica = new PessoaFisica();
@@ -62,54 +66,95 @@ async function createCliente(res, cliente){
         telefone.numero_tel = clienteData.numero_tel;
         await telefone.save();        
 
-        res.status(201);
-        res.send('');
+        res.status(201)
+        res.json({'msg':"Usuario criado com sucesso"});
+    }
+    catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
 }
 
-// Get Dispositivo
+// GET Clientes
 router.get('/', function(req, res, next) {
-    Cliente.findAll({
-        include: [
-            {
-            model: models.PessoaJuridica,
-            required: false
-            },{
-                model: models.PessoaFisica,
+    getClientes(res);
+});
+
+// Fuction GET Clientes
+async function getClientes(res){
+    try {
+        var clientes = await Cliente.findAll({
+            include: [
+                {
+                model: models.PessoaJuridica,
                 required: false
-            },{
-                model: models.Telefone,
-                required: false
-            }
-        ]
-    }).then(items => {
-		if(items.length > 0) {
-            res.json(items);
+                },{
+                    model: models.PessoaFisica,
+                    required: false
+                },{
+                    model: models.Telefone,
+                    required: false
+                },{
+                    model: models.Estado,
+                    require: true
+                },{
+                    model: models.Municipio,
+                    require: true
+                }
+            ]
+        });
+
+        /*var retorno = [];
+        for(var i = 0; i < clientes.length; i++) {
+            var estado = await Estado.findById(clientes[i].id_estado)
+            var municipio = await Municipio.findById(clientes[i].id_municipio)
+            var item = clientes[i].dataValues;
+            item.estado = estado.dataValues;
+            item.municipio = municipio.dataValues;
+            retorno.push(item);
+        }*/
+
+        if(clientes.length > 0) {
+            res.status(200);
+            res.json(clientes);
         }
         else {
             res.status(404);
-            res.send('');
+            res.json({'msg':"Nenhum registro encotrado"});
         }
-	});
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// DELETE Cliente
+router.delete('/:id',function(req, res, next) {
+    deleteClientesById(res, req.params.id);
 });
 
-router.delete('/',function(req, res, next) {
-    Cliente.findById(req.query.id).then(item => {
-        if(item != null){
-            item.destroy({
-                where: {
-                    id: item.id 
-                }
-            }).then(x =>{
-                res.status(200);
-                res.send('');
-            });
+// Function DELETE Cliente
+async function deleteClientesById(res, id){
+    try {
+        var cliente = await Cliente.findById(id);
+        if(cliente){
+            if(cliente.destroy({where: {id: cliente.id}})){
+                res.status(204);
+                res.json({'msg':"Registro deletado com sucesso"});
+            }
+            else{
+                res.status(404);
+                res.json({'msg':"Falha ao deletar registro"});
+            }
         }
         else{
-            res.status(404);
-            res.send('');
+            res.status(406);
+            res.json({'msg':"Cliente não encontrado"}); 
         }
-    });
-    
-});
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
 
 module.exports = router;

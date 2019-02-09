@@ -14,8 +14,8 @@ router.post('/', function(req, res, next) {
         loginUsuario(res,req.body);
     }
     else{
-        res.status(404);
-        res.send('Corpo da requesição vazio');
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
     }
 });
 
@@ -25,18 +25,18 @@ async function loginUsuario(res, data){
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
             if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
-                res.status(200).json({'login':true});
+                res.status(202).json({'login':true});
             }
             else{
-                res.status(404).json({'msg':"Senha inválida!"});
+                res.status(202).json({'login':false,'msg':"Senha inválida!"});
             }
         }
         else{
-            res.status(404).json({'msg':"Email informado não cadastrado!"});
+            res.status(202).json({'login':false, 'msg':"Email informado não cadastrado!"});
         } 
     } catch (error) {
-        res.status(404).send('Falha na requisição');
-        console.log(error);
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
     }
 }
 
@@ -45,8 +45,8 @@ router.post('/new', function(req, res, next) {
         createUsuario(res,req.body);   
     }
     else{
-        res.status(404);
-        res.send('Corpo da requesição vazio');
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
     }
 });
 
@@ -60,13 +60,14 @@ async function createUsuario(res, data){
             var hash = bcrypt.hashSync(data.senha, salt);
             autenticacao.senha = hash;
             await autenticacao.save();
+            res.status(201).json({'msg':"Usuario criado com sucesso"});
         }
         else{
-            res.status(404).json({'msg':"Email já cadastrado!"});
+            res.status(201).json({'msg':"Email já cadastrado!"});
         } 
     } catch (error) {
-        res.status(404).send('Falha na requisição');
-        console.log(error);
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
     }
 }
 

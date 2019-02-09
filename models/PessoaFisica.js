@@ -47,13 +47,6 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'tbl_pessoa_fisica'
     });
 
-    PessoaFisica.associate = function(models) {
-        PessoaFisica.belongsTo(models.Cliente, {
-            onDelete: "CASCADE",
-            foreignKey: 'id'
-        });
-    };
-
     PessoaFisica.getFullData = function() {
     console.log(this, sequelize);
     }
