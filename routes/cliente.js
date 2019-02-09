@@ -59,13 +59,15 @@ async function createCliente(res, cliente){
             await pessoaJuridica.save();
         }
 
-        var telefone = new Telefone();
-        telefone.id_cliente = clienteSave.id;
-        telefone.id_tipo = clienteData.id_tipo;
-        telefone.ddd = clienteData.ddd;
-        telefone.numero_tel = clienteData.numero_tel;
-        await telefone.save();        
-
+        for (let i = 0; i < clienteData.telefones.length; i++) {
+            var telefone = new Telefone();
+            const telefoneData = clienteData.telefones[i];
+            telefone.id_cliente = clienteSave.id;
+            telefone.id_tipo = telefoneData.id_tipo;
+            telefone.ddd = telefoneData.ddd;
+            telefone.numero_tel = telefoneData.numero_tel;
+            await telefone.save();
+        }
         res.status(201)
         res.json({'msg':"Usuario criado com sucesso"});
     }
