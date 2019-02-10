@@ -35,6 +35,7 @@ async function createEmpreendimento(res, empreendimento){
         registro.id_segmento = empreendimento.id_segmento;
         registro.id_porte = empreendimento.id_porte;
         registro.id_cliente = empreendimento.id_cliente;
+        registro.complemento = empreendimento.complemento;
         registro.save();
 
         res.status(201)
@@ -53,14 +54,45 @@ router.get('/', function(req, res, next) {
 // Function GET Empreendimentos
 async function getEmpreendimento(res){
     try {
-        var Empreendimentos = await Empreendimento.findAll();
+        var Empreendimentos = await Empreendimento.findAll({
+            include: [
+                {
+                    model: models.Cliente,
+                    require: true,
+                    include: [
+                        {
+                            model: models.PessoaJuridica,
+                            required: false
+                        },{
+                            model: models.PessoaFisica,
+                            required: false
+                        },{
+                            model: models.Telefone,
+                            required: false
+                        },{
+                            model: models.Estado,
+                            require: true
+                        },{
+                            model: models.Municipio,
+                            require: true
+                        }
+                    ]
+                },{
+                    model: models.Estado,
+                    require: true
+                },{
+                    model: models.Municipio,
+                    require: true
+                }
+            ]
+        });
         if(Empreendimentos.length > 0) {
             res.status(200);
             res.json(Empreendimentos);
         }
         else {
             res.status(404);
-            res.json({'msg':"Nenhum registro encotrado"});
+            res.json({'msg':"Nenhum registro encontrado"});
         }
     } catch (error) {
         

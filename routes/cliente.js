@@ -88,8 +88,8 @@ async function getClientes(res){
         var clientes = await Cliente.findAll({
             include: [
                 {
-                model: models.PessoaJuridica,
-                required: false
+                    model: models.PessoaJuridica,
+                    required: false
                 },{
                     model: models.PessoaFisica,
                     required: false

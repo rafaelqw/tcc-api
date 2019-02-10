@@ -77,11 +77,14 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Empreendimento.associate = function(models) {
+        Empreendimento.belongsTo(models.Cliente, {
+            foreignKey: 'id_cliente'
+        });
         Empreendimento.belongsTo(models.Municipio, {
-            foreignKey: 'cod_ibge'
+            foreignKey: 'id_municipio'
         });
         Empreendimento.belongsTo(models.Estado, {
-            foreignKey: 'cod_ibge'
+            foreignKey: 'id_estado'
         });
     };
 
