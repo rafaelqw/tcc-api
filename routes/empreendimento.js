@@ -2,11 +2,14 @@ var express = require('express');
 var router = express.Router();
 var models 	= require('../models');
 var Sequelize = require('sequelize');
-var underscore = require("underscore");
+var underscore = require('underscore');
 var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
 var Empreendimento = models.Empreendimento;
+var verificaToken = require('./verificaToken');
+
+router.use(verificaToken);
 
 // POST Empreendimento
 router.post('/', function(req, res, next) {

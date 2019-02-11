@@ -7,6 +7,9 @@ var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
 var RegistroSensor = models.RegistroSensor;
+var verificaToken = require('./verificaToken');
+
+router.use(verificaToken);
 
 // Create RegistroSensor
 router.post('/', function(req, res, next) {

@@ -12,7 +12,9 @@ var PessoaJuridica = models.PessoaJuridica;
 var Telefone = models.Telefone;
 var Estado = models.Estado;
 var Municipio = models.Municipio;
+var verificaToken = require('./verificaToken');
 
+router.use(verificaToken);
 
 // POST Create Cliente
 router.post('/', function(req, res, next) {

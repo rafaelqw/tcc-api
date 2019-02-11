@@ -7,6 +7,9 @@ var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
 var Receiver = models.Receiver;
+var verificaToken = require('./verificaToken');
+
+router.use(verificaToken);
 
 // Create Dispositivo
 router.post('/', function(req, res, next) {

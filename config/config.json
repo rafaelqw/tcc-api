@@ -22,5 +22,6 @@
     "host": "186.226.56.5",
     "dialect": "mysql",
     "timezone": "America/Sao_Paulo"
-  }
+  },
+  "jwtSecret": "tcc_api_jwt_secret"
 }

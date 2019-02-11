@@ -4,9 +4,14 @@ var moment = require('moment');
 module.exports = (sequelize, DataTypes) => {
 
     const Autenticacao = sequelize.define('Autenticacao', {
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                allowNull: false,
+                autoIncrement: true
+            },
             email: {
                 type: DataTypes.STRING,
-                primaryKey: true,
                 allowNull: false,
                 validate: {
                     notEmpty: true

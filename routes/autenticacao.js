@@ -8,6 +8,9 @@ var schedule = require('node-schedule');
 var Op = Sequelize.Op;
 var Autenticacao = models.Autenticacao;
 var bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
+var config = require('../config/config');
+var verificaToken = require('./verificaToken');
 
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
@@ -25,7 +28,11 @@ async function loginUsuario(res, data){
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
             if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
-                res.status(202).json({'login':true,'msg':"Logado com Sucesso!"});
+                var timeToken = 15 * 60;
+                var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
+                    expiresIn: timeToken // expires in 1min
+                });
+                res.status(202).json({'login':true,'msg':"Logado com Sucesso!", "token": token});
             }
             else{
                 res.status(202).json({'login':false,'msg':"Senha inválida!"});
@@ -41,12 +48,14 @@ async function loginUsuario(res, data){
 }
 
 router.post('/new', function(req, res, next) {
-    if(Object.keys(req.body).length > 0){
-        createUsuario(res,req.body);   
-    }
-    else{
-        res.status(400);
-        res.json({'msg':"Corpo da requesição vazio"});
+    if(verificaToken(req, res, next)){
+        if(Object.keys(req.body).length > 0){
+            createUsuario(res,req.body);   
+        }
+        else{
+            res.status(400);
+            res.json({'msg':"Corpo da requesição vazio"});
+        }
     }
 });
 
