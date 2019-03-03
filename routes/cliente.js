@@ -91,10 +91,10 @@ async function getClientes(res){
             include: [
                 {
                     model: models.PessoaJuridica,
-                    required: false
+                    required: true
                 },{
                     model: models.PessoaFisica,
-                    required: false
+                    required: true
                 },{
                     model: models.Telefone,
                     required: false

@@ -12,9 +12,11 @@ var jwt = require('jsonwebtoken');
 var config = require('../config/config');
 var verificaToken = require('./verificaToken');
 
+var timeToken = 60;
+
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        loginUsuario(res,req.body);
+        loginUsuario(res, req);
     }
     else{
         res.status(400);
@@ -22,16 +24,22 @@ router.post('/', function(req, res, next) {
     }
 });
 
-async function loginUsuario(res, data){
+async function loginUsuario(res, req){
     try {
-        var usuCadastrado = await Autenticacao.findOne({ where: {'email': data.email}});
+        var usuCadastrado = await Autenticacao.findOne({ where: {'email': req.body.email}});
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
-            if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
-                var timeToken = 15 * 60;
-                var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
-                    expiresIn: timeToken // expires in 1min
-                });
+            if(bcrypt.compareSync(req.body.senha, usuCadastrado.senha)){
+                if(!req.headers.device == "mobile"){
+                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
+                        expiresIn: timeToken
+                    });
+                } else {
+                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecretDevice , {
+                        expiresIn: 30 // expires in 15min
+                    });
+                }
+                
                 res.status(202).json({'login':true,'msg':"Logado com Sucesso!", "token": token});
             }
             else{
@@ -47,8 +55,41 @@ async function loginUsuario(res, data){
     }
 }
 
+router.post('/refresh-token', function(req, res){
+    refreshToken(res,req);
+});
+
+async function refreshToken(res,req){
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) return res.status(401).send({ msg: 'Token não enviado na requisição', erro: 1 });
+
+    const parts = authHeader.split(' ');
+
+    if(!parts.length === 2)
+        return res.status(401).send({ msg: 'Token inválido'});
+
+    const [ scheme, token ] = parts;
+
+    if(!/^Bearer$/i.test(scheme)){
+        return res.status(401).send({ msg: 'Token mal formatado' });
+    }
+
+    jwt.verify(token, config.jwtSecret, function(err, decoded) {
+        if (err) return res.status(401).send({ msg: 'Falha na validação do Token', erro: err });
+
+        req.id_usuario = decoded.id;
+        
+        var token = jwt.sign({ id: req.id }, config.jwtSecret , {
+            expiresIn: timeToken // expires in 15min
+        });
+    
+        res.status(200).json({"token": token});
+    });
+}
+
 router.post('/new', function(req, res, next) {
-    if(verificaToken(req, res, next)){
+    // if(verificaToken(req, res, next)){
         if(Object.keys(req.body).length > 0){
             createUsuario(res,req.body);   
         }
@@ -56,7 +97,7 @@ router.post('/new', function(req, res, next) {
             res.status(400);
             res.json({'msg':"Corpo da requesição vazio"});
         }
-    }
+    // }
 });
 
 async function createUsuario(res, data){

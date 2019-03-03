@@ -17,11 +17,21 @@ module.exports = (req, res, next) => {
         return res.status(401).send({ msg: 'Token mal formatado' });
     }
 
-    jwt.verify(token, config.jwtSecret, function(err, decoded) {
-        if (err) return res.status(401).send({ msg: 'Falha na validação do Token', erro: err });
-
-        req.id_usuario = decoded.id;
-
-        return next();
-    });
+    if(!req.headers.device){
+        jwt.verify(token, config.jwtSecret, function(err, decoded) {
+            if (err) return res.status(401).send({ msg: 'Falha na validação do Token', erro: err });
+    
+            req.id_usuario = decoded.id;
+    
+            return next();
+        });
+    } else {
+        jwt.verify(token, config.jwtSecretDevice, function(err, decoded) {
+            if (err) return res.status(401).send({ msg: 'Falha na validação do Token', erro: err });
+    
+            req.id_usuario = decoded.id;
+    
+            return next();
+        });
+    }
 }
