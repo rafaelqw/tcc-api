@@ -16,7 +16,7 @@ var timeToken = 60;
 
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        loginUsuario(res, req);
+        loginUsuario(res,req.body);
     }
     else{
         res.status(400);
@@ -24,22 +24,16 @@ router.post('/', function(req, res, next) {
     }
 });
 
-async function loginUsuario(res, req){
+async function loginUsuario(res, data){
     try {
-        var usuCadastrado = await Autenticacao.findOne({ where: {'email': req.body.email}});
+        var usuCadastrado = await Autenticacao.findOne({ where: {'email': data.email}});
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
-            if(bcrypt.compareSync(req.body.senha, usuCadastrado.senha)){
-                if(!req.headers.device == "mobile"){
-                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
-                        expiresIn: timeToken
-                    });
-                } else {
-                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecretDevice , {
-                        expiresIn: 30 // expires in 15min
-                    });
-                }
-                
+            if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
+                var timeToken = 15 * 60;
+                var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
+                    expiresIn: timeToken // expires in 1min
+                });
                 res.status(202).json({'login':true,'msg':"Logado com Sucesso!", "token": token});
             }
             else{
@@ -89,7 +83,7 @@ async function refreshToken(res,req){
 }
 
 router.post('/new', function(req, res, next) {
-    // if(verificaToken(req, res, next)){
+    if(verificaToken(req, res, next)){
         if(Object.keys(req.body).length > 0){
             createUsuario(res,req.body);   
         }
@@ -97,7 +91,7 @@ router.post('/new', function(req, res, next) {
             res.status(400);
             res.json({'msg':"Corpo da requesição vazio"});
         }
-    // }
+    }
 });
 
 async function createUsuario(res, data){
