@@ -41,7 +41,8 @@ module.exports = (sequelize, DataTypes) => {
             id_estado: {
                 type: DataTypes.INTEGER,
                 allowNull: true
-            },createdAt: {
+            },
+            createdAt: {
                 type: DataTypes.DATE
             },
             deletedAt: {
