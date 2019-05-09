@@ -47,12 +47,6 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'tbl_pessoa_fisica'
     });
 
-    PessoaFisica.associate = function(models) {
-        PessoaFisica.belongsTo(models.Cliente, {
-            foreignKey: 'id_cliente'
-        });
-    };
-
 
     PessoaFisica.getFullData = function() {
     console.log(this, sequelize);

@@ -12,6 +12,8 @@ var jwt = require('jsonwebtoken');
 var config = require('../config/config');
 var verificaToken = require('./verificaToken');
 
+var timeToken = 60;
+
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
         loginUsuario(res,req.body);
@@ -45,6 +47,39 @@ async function loginUsuario(res, data){
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});
     }
+}
+
+router.post('/refresh-token', function(req, res){
+    refreshToken(res,req);
+});
+
+async function refreshToken(res,req){
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) return res.status(401).send({ msg: 'Token não enviado na requisição', erro: 1 });
+
+    const parts = authHeader.split(' ');
+
+    if(!parts.length === 2)
+        return res.status(401).send({ msg: 'Token inválido'});
+
+    const [ scheme, token ] = parts;
+
+    if(!/^Bearer$/i.test(scheme)){
+        return res.status(401).send({ msg: 'Token mal formatado' });
+    }
+
+    jwt.verify(token, config.jwtSecret, function(err, decoded) {
+        if (err) return res.status(401).send({ msg: 'Falha na validação do Token', erro: err });
+
+        req.id_usuario = decoded.id;
+        
+        var token = jwt.sign({ id: req.id }, config.jwtSecret , {
+            expiresIn: timeToken // expires in 15min
+        });
+    
+        res.status(200).json({"token": token});
+    });
 }
 
 router.post('/new', function(req, res, next) {

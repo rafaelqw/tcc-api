@@ -23,5 +23,6 @@
     "dialect": "mysql",
     "timezone": "America/Sao_Paulo"
   },
-  "jwtSecret": "tcc_api_jwt_secret"
+  "jwtSecret": "tcc_api_jwt_secret",
+  "jwtSecretDevice": "tcc_api_jwt_secret_device"
 }
