@@ -7,6 +7,7 @@ var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
 var Autenticacao = models.Autenticacao;
+var Receiver = models.Receiver;
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var config = require('../config/config');
@@ -16,7 +17,7 @@ var timeToken = 300;
 
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        loginUsuario(res,req.body);
+        loginUsuario(res,req.body,req.headers);
     }
     else{
         res.status(400);
@@ -24,16 +25,31 @@ router.post('/', function(req, res, next) {
     }
 });
 
-async function loginUsuario(res, data){
+async function loginUsuario(res, data, headers){
     try {
         var usuCadastrado = await Autenticacao.findOne({ where: {'email': data.email}});
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
             if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
-                var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
-                    expiresIn: timeToken // expires in 1min
+                var timeToken = 15 * 60;
+                if(headers.device == "mobile"){
+                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecretDevice , {
+                        expiresIn: timeToken // expires in 1min
+                    });
+                } else{
+                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
+                        expiresIn: timeToken // expires in 1min
+                    });
+                }
+                
+                res.status(202).json(
+                    {'login':true,
+                    'msg':"Logado com Sucesso!", 
+                    "token": token, 
+                    "id_usuario":usuCadastrado.id,
+                    "notification": await getReceiver(usuCadastrado.id,data.tokenFCM)
                 });
-                res.status(202).json({'login':true,'msg':"Logado com Sucesso!", "token": token});
+
             }
             else{
                 res.status(202).json({'login':false,'msg':"Senha inválida!"});
@@ -46,6 +62,13 @@ async function loginUsuario(res, data){
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});
     }
+}
+
+async function getReceiver(id_usuario,tokenFCM){
+    var receiver = await Receiver.findOne({ where: {'id_usuario': id_usuario, 'registration_id': tokenFCM}});
+    var notification = false;
+    (receiver == null) ? notification = true : notification = false;
+    return notification;
 }
 
 router.post('/refresh-token', function(req, res){

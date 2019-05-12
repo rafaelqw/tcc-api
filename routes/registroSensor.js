@@ -11,35 +11,86 @@ var verificaToken = require('./verificaToken');
 
 router.use(verificaToken);
 
-// Create RegistroSensor
+// POST Create RegistroSensor
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        req.body.sensores.forEach(sensor => {
-            var registro = new RegistroSensor();
-            registro.id_sensor = sensor.id;
-            registro.valor = sensor.valor;
-            registro.save();
-        });
-        res.status(201);
-        res.send('');
+        createRegistroSensor(res, req)
     }
     else{
-        res.status(404);
-        res.send('Corpo da requesição vazio');
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
     }
 });
 
-// Get RegistroSensor
+// Function POST Create RegistroSensor
+async function createRegistroSensor(res, req){
+    try {
+        var registros = req.body;
+        for (let i = 0; i < registros.length; i++) {
+            const newRegistro = registros[i];
+            var registro = new RegistroSensor();
+            registro.id_sensor = newRegistro.id;
+            registro.valor = newRegistro.valor;
+            await registro.save();
+        }
+        res.status(201)
+        res.json({'msg':"Usuario criado com sucesso"});    
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// Get RegistroSensores
 router.get('/', function(req, res, next) {
-    RegistroSensor.findAll().then(items => {
-		if(items.length > 0) {
-            res.json(items);
+    getRegistroSensores(res, req);
+});
+
+// Function GET RegistroSensores
+async function getRegistroSensores(res, req){
+    try {
+        var registroSensor = await RegistroSensor.findAll();
+        if(registroSensor.length > 0) {
+            res.status(200);
+            res.json(registroSensor);
         }
         else {
             res.status(404);
-            res.send('');
-        }
-	});
+            res.json({'msg':"Nenhum registro encotrado"});
+        }   
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// DELETE RegistroSensor
+router.delete('/:id',function(req, res, next) {
+    deleteRegistroSensorById(res, req.params.id);
 });
+
+// Function DELETE RegistroSensor
+async function deleteRegistroSensorById(res, id){
+    try {
+        var registroSensor = await RegistroSensor.findById(id);
+        if(registroSensor){
+            if(registroSensor.destroy({where: {id: registroSensor.id}})){
+                res.status(204);
+                res.json({'msg':"Registro deletado com sucesso"});
+            }
+            else{
+                res.status(404);
+                res.json({'msg':"Falha ao deletar registro"});
+            }
+        }
+        else{
+            res.status(406);
+            res.json({'msg':"registro do Sensor não encontrado"}); 
+        }
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
 
 module.exports = router;

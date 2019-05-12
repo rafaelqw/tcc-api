@@ -14,34 +14,54 @@ router.use(verificaToken);
 // Create Sensor
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        var sensor = req.body.sensor;
-        var registro = new Sensor();
-        registro.nome = sensor.nome;
-        registro.descricao = sensor.descricao;
-        registro.id_tipo_sensor = sensor.id_tipo_sensor;
-        registro.localizacao = sensor.localizacao;
-        registro.id_dispositivo = sensor.id_dispositivo;
-        registro.save();
-        res.status(201);
-        res.send('');
+        createSensor(res, req);
     }
     else{
-        res.status(404);
-        res.send('Corpo da requesição vazio');
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
     }
 });
 
+// Function POST Create Sensor
+async function createSensor(res, req){
+    try {
+        var newSensor = req.body.sensor;
+        var sensor = new Sensor();
+        sensor.nome = newSensor.nome;
+        sensor.descricao = newSensor.descricao;
+        sensor.id_tipo_sensor = newSensor.id_tipo_sensor;
+        sensor.localizacao = newSensor.localizacao;
+        sensor.id_dispositivo = newSensor.id_dispositivo;
+        await sensor.save();
+        res.status(201)
+        res.json({'msg':"Usuario criado com sucesso"});
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
 // Get Sensor
 router.get('/', function(req, res, next) {
-    Sensor.findAll().then(items => {
-		if(items.length > 0) {
-            res.json(items);
+    getSensores(res, req);
+});
+
+// Function GET Sensores
+async function getSensores(res, req){
+    try {
+        var sensores = await Sensor.findAll();
+        if(sensores.length > 0) {
+            res.status(200);
+            res.json(sensores);
         }
         else {
             res.status(404);
-            res.send('');
-        }
-	});
-});
+            res.json({'msg':"Nenhum registro encotrado"});
+        }   
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
 
 module.exports = router;
