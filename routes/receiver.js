@@ -14,14 +14,7 @@ router.use(verificaToken);
 // Create Dispositivo
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        var receiver = req.body;
-        var registro = new Receiver();
-        registro.registration_id = receiver.registration_id;
-        registro.id_usuario = receiver.id_usuario;
-        registro.flg_notificacao_ativa = receiver.flg_notificacao_ativa;
-        registro.save();
-        res.status(201);
-        res.send('');
+        createCliente(res, req.body);
     }
     else{
         res.status(404);
@@ -29,7 +22,25 @@ router.post('/', function(req, res, next) {
     }
 });
 
-// Get Dispositivo
+// Function POST Create Receiver
+async function createCliente(res, receiver){
+    try{
+        var registro = new Receiver();
+        registro.registration_id = receiver.registration_id;
+        registro.device_name = receiver.device_name;
+        registro.id_usuario = receiver.id_usuario;
+        registro.flg_notificacao_ativa = receiver.flg_notificacao_ativa;
+        registro.save();
+        res.status(201)
+        res.json({'msg':"Receiver criado com sucesso"});
+    }
+    catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// Get Receiver
 router.get('/', function(req, res, next) {
     Receiver.findAll().then(items => {
 		if(items.length > 0) {
