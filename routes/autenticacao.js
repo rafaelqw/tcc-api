@@ -14,7 +14,7 @@ var jwt = require('jsonwebtoken');
 var config = require('../config/config');
 var verificaToken = require('./verificaToken');
 
-var timeToken = 60;
+var timeToken = 300;
 
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
@@ -38,14 +38,12 @@ async function loginUsuario(res, data, headers){
                     var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecretDevice , {
                         expiresIn: timeToken // expires in 1min
                     });
-                }
-                else{
+                } else{
                     var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
                         expiresIn: timeToken // expires in 1min
                     });
                 }
                 
-
                 res.status(202).json(
                     {'login':true,
                     'msg':"Logado com Sucesso!", 
