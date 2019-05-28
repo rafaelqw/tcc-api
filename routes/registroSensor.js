@@ -14,7 +14,8 @@ router.use(verificaToken);
 // POST Create RegistroSensor
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        createRegistroSensor(res, req)
+        //createRegistroSensor(res, req)
+        teste(res);
     }
     else{
         res.status(400);
@@ -35,6 +36,26 @@ async function createRegistroSensor(res, req){
         }
         res.status(201)
         res.json({'msg':"Usuario criado com sucesso"});    
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// Function POST Create RegistroSensor
+async function teste(res){
+    try {
+        var date = moment().format('YYYY-MM-DD HH');
+        for (let i = 0; i < 25; i++) {
+            var registro = new RegistroSensor();
+            registro.id_sensor = 2;
+            registro.valor = i * 10;
+            registro.createdAt = moment(date).format('YYYY-MM-DD HH:mm');
+            await registro.save();
+            date = moment(date).subtract(60,'m');
+        }
+        res.status(201)
+        res.json({'msg':"registro criado com sucesso"});    
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});
@@ -86,6 +107,49 @@ async function deleteRegistroSensorById(res, id){
         else{
             res.status(406);
             res.json({'msg':"registro do Sensor não encontrado"}); 
+        }
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// Get RegistroSensores
+router.get('/graphic/:sensor/:periodo', function(req, res, next) {
+    getRegistroSensoresPeriod(res, req.params.sensor, req.params.periodo);
+});
+
+async function getRegistroSensoresPeriod(res, sensor, periodo = 60){
+    try {
+        var pontos = [];
+        var date = moment().format('YYYY-MM-DD HH');
+        console.log(date)
+        for (let i = 0; i < 24; i++) {
+            var startDate = moment(date).format('YYYY-MM-DD HH:mm');
+            var endDate = moment(date).add(1,'m').format('YYYY-MM-DD HH:mm');
+            var registroSensor = await RegistroSensor.findAll({
+                attributes: [[models.sequelize.fn('AVG', models.sequelize.col('valor')), 'medValor']],
+                where:{
+                    id_sensor: sensor,
+                    createdAt: {
+                        [Op.between]: [startDate, endDate]
+                    } 
+                }
+            });
+            var ponto = {
+                label: moment(date).format('HH:mm'),
+                data:  (registroSensor[0].dataValues.medValor != null) ? parseFloat(registroSensor[0].dataValues.medValor) : 0
+            }
+            pontos.push(ponto);
+            date = moment(date).subtract(periodo,'m');
+        }
+        if(pontos.length > 0) {
+            res.status(200);
+            res.json(pontos);
+        }
+        else {
+            res.status(404);
+            res.json({'msg':"Nenhum registro encotrado"});
         }
     } catch (error) {
         res.status(404);

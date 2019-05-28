@@ -11,10 +11,10 @@ var verificaToken = require('./verificaToken');
 
 router.use(verificaToken);
 
-// Create Dispositivo
+// Create Receiver
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        createCliente(res, req.body);
+        createReceiver(res, req.body);
     }
     else{
         res.status(404);
@@ -23,14 +23,14 @@ router.post('/', function(req, res, next) {
 });
 
 // Function POST Create Receiver
-async function createCliente(res, receiver){
+async function createReceiver(res, receiver){
     try{
         var registro = new Receiver();
         registro.registration_id = receiver.registration_id;
         registro.device_name = receiver.device_name;
         registro.id_usuario = receiver.id_usuario;
         registro.flg_notificacao_ativa = receiver.flg_notificacao_ativa;
-        registro.save();
+        await registro.save();
         res.status(201)
         res.json({'msg':"Receiver criado com sucesso"});
     }
