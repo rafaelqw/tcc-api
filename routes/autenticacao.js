@@ -13,7 +13,7 @@ var jwt = require('jsonwebtoken');
 var config = require('../config/config');
 var verificaToken = require('./verificaToken');
 
-var timeToken = 300;
+var timeToken = 60 * 60;
 
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
@@ -31,7 +31,7 @@ async function loginUsuario(res, data, headers){
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
             if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
-                var timeToken = 15 * 60;
+                var timeToken = 60 * 60;
                 if(headers.device == "mobile"){
                     var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecretDevice , {
                         expiresIn: timeToken // expires in 1min
