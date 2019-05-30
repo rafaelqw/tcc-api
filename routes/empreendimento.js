@@ -39,7 +39,7 @@ async function createEmpreendimento(res, empreendimento){
         registro.id_porte = empreendimento.id_porte;
         registro.id_cliente = empreendimento.id_cliente;
         registro.complemento = empreendimento.complemento;
-        registro.save();
+        await registro.save();
 
         res.status(201)
         res.json({'msg':"Empreendimento criado com sucesso"});
