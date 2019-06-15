@@ -71,7 +71,7 @@ async function createCliente(res, cliente){
             await telefone.save();
         }
         res.status(201)
-        res.json({'msg':"Usuario criado com sucesso"});
+        res.json({'msg':"Cliente criado com sucesso"});
     }
     catch (error) {
         res.status(404);
