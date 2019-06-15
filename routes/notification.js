@@ -6,12 +6,12 @@ var underscore = require("underscore");
 var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
-var verificaToken = require('./verificaToken');
+//var verificaToken = require('./verificaToken');
 var FCM = require('fcm-node');
 var serverKey = require('../config/privatekey.json') //put the generated private key path here    
 var fcm = new FCM(serverKey)
 
-router.use(verificaToken);
+//router.use(verificaToken);
 
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){

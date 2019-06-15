@@ -46,13 +46,13 @@ async function createRegistroSensor(res, req){
 async function teste(res){
     try {
         var date = moment().format('YYYY-MM-DD HH');
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 1000; i++) {
             var registro = new RegistroSensor();
             registro.id_sensor = 2;
-            registro.valor = i * 10;
+            registro.valor = Math.random() * 50;
             registro.createdAt = moment(date).format('YYYY-MM-DD HH:mm');
             await registro.save();
-            date = moment(date).subtract(60,'m');
+            date = moment(date).subtract(5,'m');
         }
         res.status(201)
         res.json({'msg':"registro criado com sucesso"});    
