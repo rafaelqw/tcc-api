@@ -64,17 +64,67 @@ async function getSensores(res, req){
     }
 }
 
+// Function GET Sensores
+async function getSensores(res, req){
+    try {
+        var sensores = await Sensor.findAll();
+        if(sensores.length > 0) {
+            res.status(200);
+            res.json(sensores);
+        }
+        else {
+            res.status(404);
+            res.json({'msg':"Nenhum registro encotrado"});
+        }   
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// Get Sensor by ID
+router.get('/id/:id_empreendimento/:id_sensor', function(req, res, next) {
+    getSensoresbyId(res, req.params.id_empreendimento, req.params.id_sensor);
+});
+
+// Function GET Sensores by ID
+async function getSensoresbyId(res, id_empreendimento, id_sensor){
+    try {
+        var sqlQuery =  "SELECT ts.*, td.nome as dispositivo, tts.tipo_sensor FROM tbl_sensor AS ts ";
+            sqlQuery += "INNER JOIN tbl_dispositivo AS td ON td.id = ts.id_dispositivo ";
+            sqlQuery += "INNER JOIN tbl_empreendimento AS te ON te.id = td.id_empreendimento ";
+            sqlQuery += "INNER JOIN tbl_tipo_sensor AS tts ON tts.id = ts.id_tipo_sensor ";
+            sqlQuery += "WHERE te.id = " + id_empreendimento;
+            sqlQuery += "  AND ts.id = " + id_sensor;
+
+        var sensores = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+
+        if(sensores.length > 0) {
+            res.status(200);
+            res.json(sensores);
+        }
+        else {
+            res.status(404);
+            res.json({'msg':"Nenhum registro encotrado"});
+        }   
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
 // Get Sensor by Empreendimento
-router.get('/empre/:id', function(req, res, next) {
-    getSensoresbyEmpreendimento(res, req.params.id);
+router.get('/empre/:id_empreendimento', function(req, res, next) {
+    getSensoresbyEmpreendimento(res, req.params.id_empreendimento);
 });
 
 // Function GET Sensores by Empreendimento
 async function getSensoresbyEmpreendimento(res, id_empreendimento){
     try {
-        var sqlQuery =  "SELECT ts.* FROM tcc_db.tbl_sensor AS ts "
+        var sqlQuery =  "SELECT ts.*, td.nome as dispositivo, tts.tipo_sensor FROM tcc_db.tbl_sensor AS ts "
             sqlQuery += "INNER JOIN tbl_dispositivo AS td ON td.id = ts.id_dispositivo "
             sqlQuery += "INNER JOIN tbl_empreendimento AS te ON te.id = td.id_empreendimento "
+            sqlQuery += "INNER JOIN tbl_tipo_sensor AS tts ON tts.id = ts.id_tipo_sensor ";
             sqlQuery += "WHERE te.id = " + id_empreendimento + ";"
 
         var sensores = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
@@ -93,4 +143,34 @@ async function getSensoresbyEmpreendimento(res, id_empreendimento){
     }
 }
 
+// Get Sensor by Dispositivo
+router.get('/disp/:id_empreendimento/:id_dispositivo', function(req, res, next) {
+    getSensoresbyDispositivo(res, req.params.id_empreendimento, req.params.id_dispositivo);
+});
+
+// Function GET Sensores by Dispositivo
+async function getSensoresbyDispositivo(res, id_empreendimento, id_dispositivo){
+    try {
+        var sqlQuery =  "SELECT ts.*, td.nome as dispositivo, tts.tipo_sensor FROM tcc_db.tbl_sensor AS ts ";
+            sqlQuery += "INNER JOIN tbl_dispositivo AS td ON td.id = ts.id_dispositivo ";
+            sqlQuery += "INNER JOIN tbl_empreendimento AS te ON te.id = td.id_empreendimento ";
+            sqlQuery += "INNER JOIN tbl_tipo_sensor AS tts ON tts.id = ts.id_tipo_sensor ";
+            sqlQuery += "WHERE te.id = " + id_empreendimento;
+            sqlQuery += "   AND td.id = " + id_dispositivo + ";";
+
+        var sensores = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+
+        if(sensores.length > 0) {
+            res.status(200);
+            res.json(sensores);
+        }
+        else {
+            res.status(404);
+            res.json({'msg':"Nenhum registro encotrado"});
+        }   
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
 module.exports = router;

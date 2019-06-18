@@ -41,14 +41,22 @@ async function createDispositivo(res, req){
 }
 
 // Get Dispositivo
-router.get('/', function(req, res, next) {
-    getDispositivos(res, req);
+router.get('/:id_empreendimento', function(req, res, next) {
+    getDispositivos(res, req.params.id_empreendimento);
 });
 
 // Function GET Dispositivo
-async function getDispositivos(res, req){
+async function getDispositivos(res, id_empreendimento){
     try {
-        var dispositivos = await Dispositivo.findAll();
+        var sqlQuery =  " SELECT td.*, tmd.modelo, count(ts.id) AS qtd_sensores ";
+            sqlQuery += " FROM tbl_dispositivo AS td ";
+            sqlQuery += " INNER JOIN tbl_sensor AS ts ON ts.id_dispositivo = td.id ";
+            sqlQuery += " INNER JOIN tbl_modelo_dispositivos AS tmd ON tmd.id = td.id_modelo ";
+            sqlQuery += " WHERE td.id_empreendimento = " + id_empreendimento + " ";
+            sqlQuery += " GROUP BY td.id;";
+
+        var dispositivos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+        
         if(dispositivos.length > 0) {
             res.status(200);
             res.json(dispositivos);
