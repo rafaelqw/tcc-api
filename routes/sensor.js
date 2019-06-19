@@ -64,24 +64,6 @@ async function getSensores(res, req){
     }
 }
 
-// Function GET Sensores
-async function getSensores(res, req){
-    try {
-        var sensores = await Sensor.findAll();
-        if(sensores.length > 0) {
-            res.status(200);
-            res.json(sensores);
-        }
-        else {
-            res.status(404);
-            res.json({'msg':"Nenhum registro encotrado"});
-        }   
-    } catch (error) {
-        res.status(404);
-        res.json({'msg':"Falha na requisição", 'error': error});
-    }
-}
-
 // Get Sensor by ID
 router.get('/id/:id_empreendimento/:id_sensor', function(req, res, next) {
     getSensoresbyId(res, req.params.id_empreendimento, req.params.id_sensor);
@@ -168,6 +150,35 @@ async function getSensoresbyDispositivo(res, id_empreendimento, id_dispositivo){
             res.status(404);
             res.json({'msg':"Nenhum registro encotrado"});
         }   
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// DELETE Receiver
+router.delete('/:id',function(req, res, next) {
+    deleteSensor(res, req.params.id);
+});
+
+// Function DELETE Sensor
+async function deleteSensor(res, id_Sensor){
+    try {
+        var sensor = await Sensor.findById(id_Sensor);
+        if(sensor){
+            if(sensor.destroy({where: {id: sensor.id}})){
+                res.status(204);
+                res.json({'msg':"Sensor deletado com sucesso"});
+            }
+            else{
+                res.status(404);
+                res.json({'msg':"Falha ao deletar Sensor"});
+            }
+        }
+        else{
+            res.status(406);
+            res.json({'msg':"Sensor do Sensor não encontrado"}); 
+        }
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});

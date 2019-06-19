@@ -109,5 +109,34 @@ async function PutReceiverByUsuario(res, data){
     }
 }
 
+// DELETE Receiver
+router.delete('/:id',function(req, res, next) {
+    deleteReceiver(res, req.params.id);
+});
+
+// Function DELETE Receiver
+async function deleteReceiver(res, id_receiver){
+    try {
+        var receiver = await Receiver.findById(id_receiver);
+        if(receiver){
+            if(receiver.destroy({where: {id: receiver.id}})){
+                res.status(204);
+                res.json({'msg':"Receiver deletado com sucesso"});
+            }
+            else{
+                res.status(404);
+                res.json({'msg':"Falha ao deletar Receiver"});
+            }
+        }
+        else{
+            res.status(406);
+            res.json({'msg':"Receiver do Sensor não encontrado"}); 
+        }
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
 
 module.exports = router;
