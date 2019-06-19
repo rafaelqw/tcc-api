@@ -9,13 +9,12 @@ var Op = Sequelize.Op;
 var RegistroSensor = models.RegistroSensor;
 var verificaToken = require('./verificaToken');
 
-router.use(verificaToken);
+//router.use(verificaToken);
 
 // POST Create RegistroSensor
 router.post('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        //createRegistroSensor(res, req)
-        teste(res);
+        createRegistroSensor(res, req)
     }
     else{
         res.status(400);
@@ -35,27 +34,39 @@ async function createRegistroSensor(res, req){
             await registro.save();
         }
         res.status(201)
-        res.json({'msg':"Usuario criado com sucesso"});    
+        res.json({'msg':"Registro do sensor criado com sucesso"});    
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});
     }
 }
 
+// POST Create RegistroSensor Teste
+router.post('/teste/:id', function(req, res, next) {
+    if(Object.keys(req.params).length > 0){
+        teste(res, req.params.id)
+    }
+    else{
+        res.status(400);
+        res.json({'msg':"Paramentros da requesição vazio"});
+    }
+});
+
 // Function POST Create RegistroSensor
-async function teste(res){
+async function teste(res, id_sensor){
     try {
         var date = moment().format('YYYY-MM-DD HH');
-        for (let i = 0; i < 1000; i++) {
+        date = moment(date).add(60,'m');
+        for (let i = 0; i < 300; i++) {
             var registro = new RegistroSensor();
-            registro.id_sensor = 2;
+            registro.id_sensor = id_sensor;
             registro.valor = Math.random() * 50;
             registro.createdAt = moment(date).format('YYYY-MM-DD HH:mm');
             await registro.save();
             date = moment(date).subtract(5,'m');
         }
         res.status(201)
-        res.json({'msg':"registro criado com sucesso"});    
+        res.json({'msg':"registros de teste criados com sucesso"});    
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});
