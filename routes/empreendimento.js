@@ -109,7 +109,7 @@ router.get('/id_usuario/:id_usuario', function(req, res, next) {
 });
 
 // Function GET Sensores by ID
-async function getEmpreendimentoByIdUsuario(id_usuario){
+async function getEmpreendimentoByIdUsuario(res, id_usuario){
     var empreendimentos = [];
     try {
         var sqlQuery =  "SELECT te.*, tep.porte, tes.segmento FROM tbl_empreendimento AS te ";
@@ -121,13 +121,16 @@ async function getEmpreendimentoByIdUsuario(id_usuario){
         var empreendimentos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
 
         if(empreendimentos.length > 0) {
-            return empreendimentos;
+            res.status(200);
+            res.json(empreendimentos);
         }
-        else {
-            return null
+        else{
+            res.status(404);
+            res.json({'msg':"Nenhum registro encontrado"}); 
         }   
     } catch (error) {
-        return null
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
     }
 }
 
