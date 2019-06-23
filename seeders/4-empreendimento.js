@@ -21,6 +21,21 @@ module.exports = {
         id_segmento: 1,
         id_porte: 1,
         id_cliente: 1
+      },{
+        id: 2,
+        nome: 'Empreendimento Teste 2',
+        descricao: "Apenas para Testes",
+        cnpj: "012030120301203",
+        cep: "0000-000",
+        logradouro: "Teste",
+        numero: "123",
+        bairro: "teste",
+        complemento: "teste",
+        id_estado: 35,
+        id_municipio: 3550308,
+        id_segmento: 1,
+        id_porte: 1,
+        id_cliente: 1
       }], {});
     
   },
