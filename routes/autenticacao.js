@@ -79,7 +79,7 @@ async function getReceiver(id_usuario,tokenFCM){
 async function getEmpreendimento(id_usuario){
     var empreendimentos = [];
     try {
-        var sqlQuery =  "SELECT * FROM tbl_empreendimento AS te ";
+        var sqlQuery =  "SELECT te.*, tep.porte, tes.segmento FROM tbl_empreendimento AS te ";
             sqlQuery += "INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_empreendimento = te.id ";
             sqlQuery += "INNER JOIN tbl_empreendimento_porte as tep on tep.id = te.id_porte ";
             sqlQuery += "INNER JOIN tbl_empreendimento_segmento as tes on tes.id = te.id_segmento ";
