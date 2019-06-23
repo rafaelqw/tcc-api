@@ -78,9 +78,23 @@ async function getReceiver(id_usuario,tokenFCM){
 
 async function getEmpreendimento(id_usuario){
     var empreendimentos = [];
-    empreendimentos = await UsuarioEmpreendimento.findAll({'id_usuario': id_usuario});
-    for (let i = 0; i < empreendimentos.length; i++) {
-        empreendimento[i].detalhes = await Empreendimento.findOne({'id': empreendimentos[i].id_empreendimento});
+    try {
+        var sqlQuery =  "SELECT * FROM tbl_empreendimento AS te ";
+            sqlQuery += "INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_empreendimento = te.id ";
+            sqlQuery += "INNER JOIN tbl_empreendimento_porte as tep on tep.id = te.id_porte ";
+            sqlQuery += "INNER JOIN tbl_empreendimento_segmento as tes on tes.id = te.id_segmento ";
+            sqlQuery += "where tue.id_usuario = " + id_usuario + " ;";
+
+        var empreendimentos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+
+        if(empreendimentos.length > 0) {
+            return empreendimentos;
+        }
+        else {
+            return null
+        }   
+    } catch (error) {
+        return null
     }
     return empreendimentos;
 }
