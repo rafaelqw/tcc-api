@@ -29,19 +29,23 @@ router.post('/', function(req, res, next) {
 
 async function loginUsuario(res, data, headers){
     try {
-        var usuCadastrado = await Autenticacao.findOne({ where: {'email': data.email}});
-        if(usuCadastrado){
-            usuCadastrado = usuCadastrado.dataValues;
-            if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
+        var sqlQuery =  "SELECT ta.id, ta.id_usuario, tu.nome, ta.senha FROM tbl_autenticacao AS ta ";
+            sqlQuery += "INNER JOIN tbl_usuario AS tu ON tu.id = ta.id_usuario ";
+            sqlQuery += "WHERE ta.email = '"+data.email+"'";
+
+        var aut = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+        aut = aut[0];
+        if(aut){
+            if(bcrypt.compareSync(data.senha, aut.senha)){
 
                 var timeToken = 60 * 60;
                 if(headers.device == "mobile"){
                     timeToken = 60 * 60;
-                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecretDevice , {
+                    var token = jwt.sign({ id: aut.id }, config.jwtSecretDevice , {
                         expiresIn: timeToken // expires in 1min
                     });
                 } else{
-                    var token = jwt.sign({ id: usuCadastrado.id }, config.jwtSecret , {
+                    var token = jwt.sign({ id: aut.id }, config.jwtSecret , {
                         expiresIn: timeToken // expires in 1min
                     });
                 }
@@ -50,9 +54,10 @@ async function loginUsuario(res, data, headers){
                     {'login':true,
                     'msg':"Logado com Sucesso!", 
                     "token": token, 
-                    "id_usuario":usuCadastrado.id,
-                    "empreendimentos": await getEmpreendimento(usuCadastrado.id),
-                    "notification": await getReceiver(usuCadastrado.id,data.tokenFCM)
+                    "id_usuario":aut.id_usuario,
+                    "nome_usuario":aut.nome,
+                    "empreendimentos": await getEmpreendimentoByUsuario(aut.id_usuario),
+                    "notification": await getReceiver(aut.id,data.tokenFCM)
                 });
 
             }
@@ -76,7 +81,7 @@ async function getReceiver(id_usuario,tokenFCM){
     return notification;
 }
 
-async function getEmpreendimento(id_usuario){
+async function getEmpreendimentoByUsuario(id_usuario){
     var empreendimentos = [];
     try {
         var sqlQuery =  "SELECT te.*, tep.porte, tes.segmento FROM tbl_empreendimento AS te ";
@@ -96,7 +101,6 @@ async function getEmpreendimento(id_usuario){
     } catch (error) {
         return null
     }
-    return empreendimentos;
 }
 
 router.post('/refresh-token', function(req, res){

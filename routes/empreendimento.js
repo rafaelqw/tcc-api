@@ -49,6 +49,7 @@ async function createEmpreendimento(res, empreendimento){
     }
 }
 
+
 // GET Empreendimentos
 router.get('/', function(req, res, next) {
     getEmpreendimento(res);
@@ -99,6 +100,34 @@ async function getEmpreendimento(res){
         }
     } catch (error) {
         
+    }
+}
+
+// Get Empreendimento by id_usuario
+router.get('/id_usuario/:id_usuario', function(req, res, next) {
+    getEmpreendimentoByIdUsuario(res, req.params.id_usuario);
+});
+
+// Function GET Sensores by ID
+async function getEmpreendimentoByIdUsuario(id_usuario){
+    var empreendimentos = [];
+    try {
+        var sqlQuery =  "SELECT te.*, tep.porte, tes.segmento FROM tbl_empreendimento AS te ";
+            sqlQuery += "INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_empreendimento = te.id ";
+            sqlQuery += "INNER JOIN tbl_empreendimento_porte as tep on tep.id = te.id_porte ";
+            sqlQuery += "INNER JOIN tbl_empreendimento_segmento as tes on tes.id = te.id_segmento ";
+            sqlQuery += "where tue.id_usuario = " + id_usuario + " ;";
+
+        var empreendimentos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+
+        if(empreendimentos.length > 0) {
+            return empreendimentos;
+        }
+        else {
+            return null
+        }   
+    } catch (error) {
+        return null
     }
 }
 
