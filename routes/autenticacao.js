@@ -8,7 +8,8 @@ var schedule = require('node-schedule');
 var Op = Sequelize.Op;
 var Autenticacao = models.Autenticacao;
 var Receiver = models.Receiver;
-var UserEmpreendimento = models.UserEmpreendimento;
+var Empreendimento = models.Empreendimento;
+var UsuarioEmpreendimento = models.UsuarioEmpreendimento;
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var config = require('../config/config');
@@ -32,6 +33,7 @@ async function loginUsuario(res, data, headers){
         if(usuCadastrado){
             usuCadastrado = usuCadastrado.dataValues;
             if(bcrypt.compareSync(data.senha, usuCadastrado.senha)){
+
                 var timeToken = 60 * 60;
                 if(headers.device == "mobile"){
                     timeToken = 60 * 60;
@@ -49,7 +51,7 @@ async function loginUsuario(res, data, headers){
                     'msg':"Logado com Sucesso!", 
                     "token": token, 
                     "id_usuario":usuCadastrado.id,
-                    "id_empreendimento": await getEmpreendimento(usuCadastrado.id),
+                    "empreendimentos": await getEmpreendimento(usuCadastrado.id),
                     "notification": await getReceiver(usuCadastrado.id,data.tokenFCM)
                 });
 
@@ -75,8 +77,12 @@ async function getReceiver(id_usuario,tokenFCM){
 }
 
 async function getEmpreendimento(id_usuario){
-    var empreendimento = await UserEmpreendimento.findOne({'id_usuario': id_usuario});
-    return (empreendimento != null) ? empreendimento.id_empreendimento : null;
+    var empreendimentos = [];
+    empreendimentos = await UsuarioEmpreendimento.findAll({'id_usuario': id_usuario});
+    for (let i = 0; i < empreendimentos.length; i++) {
+        empreendimento[i].detalhes = await Empreendimento.findOne({'id': empreendimentos[i].id_empreendimento});
+    }
+    return empreendimentos;
 }
 
 router.post('/refresh-token', function(req, res){

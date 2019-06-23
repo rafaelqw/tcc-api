@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 autoIncrement: true
             },
+            id_usuario: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             email: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -37,6 +41,12 @@ module.exports = (sequelize, DataTypes) => {
           paranoid: true,
           tableName: 'tbl_autenticacao'
     });
+
+    Autenticacao.associate = function(models) {
+        Autenticacao.belongsTo(models.Usuario, {
+          foreignKey: 'id_usuario'
+        });
+    };
 
     Autenticacao.getFullData = function() {
     console.log(this, sequelize);

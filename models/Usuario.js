@@ -3,22 +3,19 @@ var moment = require('moment');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const UserEmpreendimento = sequelize.define('UserEmpreendimento', {
+    const Usuario = sequelize.define('Usuario', {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 allowNull: false,
                 autoIncrement: true
             },
-            id_user: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notEmpty: true
-                }
+            nome: {
+                type: DataTypes.STRING,
+                allowNull: false
             },
-            id_empreendimento: {
-                type: DataTypes.INTEGER,
+            email: {
+                type: DataTypes.STRING,
                 allowNull: false,
                 validate: {
                     notEmpty: true
@@ -35,14 +32,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         }, {
           paranoid: true,
-          tableName: 'tbl_user_empreendimento'
+          tableName: 'tbl_usuario'
     });
 
-    UserEmpreendimento.getFullData = function() {
+    Usuario.getFullData = function() {
     console.log(this, sequelize);
     }
 
-	return UserEmpreendimento;
+	return Usuario;
 };
 
 	

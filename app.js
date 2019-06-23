@@ -17,6 +17,7 @@ var receiverRouter = require('./routes/receiver');
 var estadoRouter = require('./routes/estado');
 var municipioRouter = require('./routes/municipio');
 var notificationRouter = require('./routes/notification');
+var usuario = require('./routes/usuario');
 
 var app = express();
 
@@ -43,6 +44,7 @@ app.use('/autenticacao', autenticacaoRouter);
 app.use('/estado', estadoRouter);
 app.use('/municipio', municipioRouter);
 app.use('/notification', notificationRouter);
+app.use('/usuario', usuario);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

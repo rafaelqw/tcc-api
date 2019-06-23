@@ -3,16 +3,26 @@ var moment = require('moment');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const TipoSensor = sequelize.define('TipoSensor', {
+    const UsuarioEmpreendimento = sequelize.define('UsuarioEmpreendimento', {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 allowNull: false,
                 autoIncrement: true
             },
-            tipo_sensor:{
-                type: DataTypes.STRING,
-                allowNull: true,
+            id_usuario: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notEmpty: true
+                }
+            },
+            id_empreendimento: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notEmpty: true
+                }
             },
             createdAt: {
                 type: DataTypes.DATE
@@ -25,14 +35,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         }, {
           paranoid: true,
-          tableName: 'tbl_tipo_sensor'
+          tableName: 'tbl_usuario_empreendimento'
     });
 
-    TipoSensor.getFullData = function() {
+    UsuarioEmpreendimento.getFullData = function() {
     console.log(this, sequelize);
     }
 
-	return TipoSensor;
+	return UsuarioEmpreendimento;
 };
 
 	

@@ -3,7 +3,7 @@ var moment = require('moment');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const modeloDispositivos = sequelize.define('ModeloDispositivos', {
+    const ModeloDispositivos = sequelize.define('ModeloDispositivos', {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
@@ -28,11 +28,11 @@ module.exports = (sequelize, DataTypes) => {
           tableName: 'tbl_modelo_dispositivos'
     });
 
-    modeloDispositivos.getFullData = function() {
+    ModeloDispositivos.getFullData = function() {
     console.log(this, sequelize);
     }
 
-	return modeloDispositivos;
+	return ModeloDispositivos;
 };
 
 	
