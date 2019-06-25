@@ -80,7 +80,35 @@ async function getUsuarios(res){
         }
         else {
             res.status(404);
-            res.json({'msg':"Nenhum registro encotrado"});
+            res.json({'msg':"Nenhum registro encontrado"});
+        }
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// GET usuarios by Empreendimento
+router.get('/id_empreendimento/:id_empreendimento', function(req, res, next) {
+    getUsuariosByEmpreendimento(res, req.params.id_empreendimento);
+});
+
+// Fuction GET usuarios by Empreendimento
+async function getUsuariosByEmpreendimento(res, id_empreendimento){
+    try {
+        var sqlQuery =  "SELECT usu.id, usu.nome, usu.email FROM tbl_usuario AS usu ";
+            sqlQuery += "INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_usuario = usu.id ";
+            sqlQuery += "WHERE tue.id_empreendimento = " + id_empreendimento + " ;";
+
+        var usuarios = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+
+        if(usuarios.length > 0) {
+            res.status(200);
+            res.json(usuarios);
+        }
+        else {
+            res.status(404);
+            res.json({'msg':"Nenhum registro encontrado"});
         }
     } catch (error) {
         res.status(404);
