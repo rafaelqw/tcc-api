@@ -112,10 +112,13 @@ router.get('/id_usuario/:id_usuario', function(req, res, next) {
 async function getEmpreendimentoByIdUsuario(res, id_usuario){
     var empreendimentos = [];
     try {
-        var sqlQuery =  "SELECT te.*, tep.porte, tes.segmento FROM tbl_empreendimento AS te ";
+        var sqlQuery =  "SELECT te.*, tep.porte, tes.segmento, pf.nome as nome_cliente, pf.rg, pf.cpf, pf.data_nascimento, pf.sexo, pj.razao_social, pj.nome_fantasia, pj.cnpj, pj.inscricao_estadual FROM tbl_empreendimento AS te ";
             sqlQuery += "INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_empreendimento = te.id ";
             sqlQuery += "INNER JOIN tbl_empreendimento_porte as tep on tep.id = te.id_porte ";
             sqlQuery += "INNER JOIN tbl_empreendimento_segmento as tes on tes.id = te.id_segmento ";
+            sqlQuery += "INNER JOIN tbl_cliente as tc on tc.id = te.id_cliente ";
+            sqlQuery += "LEFT JOIN tbl_pessoa_fisica pf on pf.id_cliente = tc.id ";
+            sqlQuery += "LEFT JOIN tbl_pessoa_juridica pj on pj.id_cliente  = tc.id ";
             sqlQuery += "where tue.id_usuario = " + id_usuario + " ;";
 
         var empreendimentos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
