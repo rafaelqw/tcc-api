@@ -7,6 +7,7 @@ var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
 var Dispositivo = models.Dispositivo;
+var Modelo = models.ModeloDispositivos;
 var verificaToken = require('./verificaToken');
 
 router.use(verificaToken);
@@ -33,7 +34,7 @@ async function createDispositivo(res, req){
         dispositivo.id_empreendimento = newDispositivo.id_empreendimento;
         await dispositivo.save();
         res.status(201)
-        res.json({'msg':"Usuario criado com sucesso"});    
+        res.json({'msg':"Dispositivo criado com sucesso"});    
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});
@@ -41,7 +42,7 @@ async function createDispositivo(res, req){
 }
 
 // Get Dispositivo
-router.get('/:id_empreendimento', function(req, res, next) {
+router.get('/empre/:id_empreendimento', function(req, res, next) {
     getDispositivos(res, req.params.id_empreendimento);
 });
 
@@ -50,7 +51,7 @@ async function getDispositivos(res, id_empreendimento){
     try {
         var sqlQuery =  " SELECT td.*, tmd.modelo, count(ts.id) AS qtd_sensores ";
             sqlQuery += " FROM tbl_dispositivo AS td ";
-            sqlQuery += " INNER JOIN tbl_sensor AS ts ON ts.id_dispositivo = td.id ";
+            sqlQuery += " LEFT JOIN tbl_sensor AS ts ON ts.id_dispositivo = td.id ";
             sqlQuery += " INNER JOIN tbl_modelo_dispositivos AS tmd ON tmd.id = td.id_modelo ";
             sqlQuery += " WHERE td.id_empreendimento = " + id_empreendimento + " ";
             sqlQuery += " GROUP BY td.id;";
@@ -94,6 +95,28 @@ async function deleteDispositivoById(res, id){
             res.status(406);
             res.json({'msg':"Dispositivo não encontrado"}); 
         }
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// GET Modelos
+router.get('/modelo',function(req, res, next) {
+    getModelos(res);
+});
+
+async function getModelos(res){
+    try {
+        var modelos = await Modelo.findAll();
+        if(modelos.length > 0) {
+            res.status(200);
+            res.json(modelos);
+        }
+        else {
+            res.status(404);
+            res.json({'msg':"Nenhum registro encotrado"});
+        }   
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});

@@ -17,7 +17,7 @@ module.exports = {
     },{
       id: 3,
       id_usuario: 2,
-      id_empreendimento: 2
+      id_empreendimento: 1
     },{
       id: 4,
       id_usuario: 2,

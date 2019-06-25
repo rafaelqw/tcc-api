@@ -7,6 +7,7 @@ var moment = require('moment');
 var schedule = require('node-schedule'); 
 var Op = Sequelize.Op;
 var Sensor = models.Sensor;
+var TipoSensor = models.TipoSensor;
 var verificaToken = require('./verificaToken');
 
 router.use(verificaToken);
@@ -34,7 +35,7 @@ async function createSensor(res, req){
         sensor.id_dispositivo = newSensor.id_dispositivo;
         await sensor.save();
         res.status(201)
-        res.json({'msg':"Usuario criado com sucesso"});
+        res.json({'msg':"Sensor criado com sucesso"});
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});
@@ -184,4 +185,27 @@ async function deleteSensor(res, id_Sensor){
         res.json({'msg':"Falha na requisição", 'error': error});
     }
 }
+
+// GET Modelos
+router.get('/tipo_sensor',function(req, res, next) {
+    getTipoSensor(res);
+});
+
+async function getTipoSensor(res){
+    try {
+        var tipoSensor = await TipoSensor.findAll();
+        if(tipoSensor.length > 0) {
+            res.status(200);
+            res.json(tipoSensor);
+        }
+        else {
+            res.status(404);
+            res.json({'msg':"Nenhum registro encotrado"});
+        }   
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
 module.exports = router;
