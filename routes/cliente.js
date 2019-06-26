@@ -79,6 +79,90 @@ async function createCliente(res, cliente){
     }
 }
 
+// PUT Cliente by id_cliente
+router.put('/', function(req, res, next) {
+    if(Object.keys(req.body).length > 0){
+        AtualizarCliente(res, req.body);
+    }
+    else{
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
+    }
+});
+
+// Function PUT Cliente by id_cliente
+async function AtualizarCliente(res, data){
+    try {
+        var cliente = await Cliente.findOne({ where:{ "id": data.id } });
+
+        var sqlQuery =  "SELECT * FROM tbl_pessoa_fisica ";
+            sqlQuery += "WHERE id_cliente = " + data.id + " ;";
+
+        var pessoaFisica = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+
+        var sqlQuery =  "SELECT * FROM tbl_pessoa_juridica ";
+            sqlQuery += "WHERE id_cliente = " + data.id + " ;";
+
+        var pessoaJuridica = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
+
+        await cliente.update({
+            "email": data.email,
+            "cep": data.cep,
+            "logradouro": data.logradouro,
+            "numero": data.numero,
+            "bairro": data.bairro,
+            "complemento": data.complemento,
+            "id_estado": data.id_estado,
+            "id_municipio": data.id_municipio,
+        });
+        
+        if(pessoaFisica){
+            PessoaFisica.destroy({where: {id: pessoaFisica.id}});
+        }
+        
+        if(pessoaJuridica){
+            PessoaJuridica.destroy({where: {id: pessoaJuridica.id}});
+        }
+
+        if(data.tipo_cadastro == "pf"){
+            var pessoaFisica = new PessoaFisica();
+            pessoaFisica.id_cliente = data.id;
+            pessoaFisica.nome = data.nome;
+            pessoaFisica.cpf = data.cpf;
+            pessoaFisica.rg = data.rg;
+            pessoaFisica.data_nascimento = data.data_nascimento;
+            pessoaFisica.sexo = data.sexo;
+            await pessoaFisica.save();
+        }
+        else if(data.tipo_cadastro == "pj"){
+            var pessoaJuridica = new PessoaJuridica();
+            pessoaJuridica.id_cliente = data.id;
+            pessoaJuridica.nome_fantasia = data.nome_fantasia;
+            pessoaJuridica.razao_social = data.razao_social;
+            pessoaJuridica.cnpj = data.cnpj;
+            pessoaJuridica.inscricao_estadual = data.inscricao_estadual;
+            await pessoaJuridica.save();
+        }
+
+        for (let i = 0; i < data.telefones.length; i++) {
+            var telefone = new Telefone();
+            const telefoneData = data.telefones[i];
+            telefone.id_cliente = data.id;
+            telefone.id_tipo = telefoneData.id_tipo;
+            telefone.ddd = telefoneData.ddd;
+            telefone.numero_tel = telefoneData.numero_tel;
+            await telefone.save();
+        }
+
+        res.status(200);
+        res.json(cliente);
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+
 // GET Clientes
 router.get('/', function(req, res, next) {
     getClientes(res);
