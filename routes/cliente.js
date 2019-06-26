@@ -116,12 +116,12 @@ async function AtualizarCliente(res, data){
             "id_municipio": data.id_municipio,
         });
         
-        if(pessoaFisica){
-            PessoaFisica.destroy({where: {id: pessoaFisica.id}});
+        if(pessoaFisica.length > 0){
+            PessoaFisica.destroy({where: {id_cliente: data.id}});
         }
         
-        if(pessoaJuridica){
-            PessoaJuridica.destroy({where: {id: pessoaJuridica.id}});
+        if(pessoaJuridica.length > 0){
+            PessoaJuridica.destroy({where: {id_cliente: data.id}});
         }
 
         if(data.tipo_cadastro == "pf"){
@@ -143,6 +143,8 @@ async function AtualizarCliente(res, data){
             pessoaJuridica.inscricao_estadual = data.inscricao_estadual;
             await pessoaJuridica.save();
         }
+
+        Telefone.destroy({where: {id_cliente: data.id}});
 
         for (let i = 0; i < data.telefones.length; i++) {
             var telefone = new Telefone();
