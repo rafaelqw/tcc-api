@@ -211,4 +211,37 @@ async function getTipoSensor(res){
     }
 }
 
+// PUT Sensor by id_sensor
+router.put('/', function(req, res, next) {
+    if(Object.keys(req.body).length > 0){
+        AtualizarSensor(res, req.body.sensor);
+    }
+    else{
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
+    }
+});
+
+// Function PUT Sensor by id_sensor
+async function AtualizarSensor(res, data){
+    try {        
+            var sensor = await Sensor.update({
+                "nome": data.nome,
+                "descricao": data.descricao,
+                "id_tipo_sensor": data.id_tipo_sensor,
+                "localizacao": data.localizacao,
+                "id_dispositivo": data.id_dispositivo
+            },{
+                where:{ "id": data.id }
+            });
+    
+            res.status(200);
+            res.json(sensor);
+        
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
 module.exports = router;

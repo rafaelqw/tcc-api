@@ -120,7 +120,7 @@ async function getUsuariosByEmpreendimento(res, id_empreendimento){
 // PUT Usuario by id_usuario
 router.put('/', function(req, res, next) {
     if(Object.keys(req.body).length > 0){
-        AtualizarCliente(res, req.body);
+        AtualizarUsuario(res, req.body);
     }
     else{
         res.status(400);
@@ -129,7 +129,7 @@ router.put('/', function(req, res, next) {
 });
 
 // Function PUT Usuario by id_usuario
-async function AtualizarCliente(res, data){
+async function AtualizarUsuario(res, data){
     try {
         var usuCadastrado = await Autenticacao.findOne({ where: {'email': data.email}});
         if(!usuCadastrado){
@@ -182,7 +182,7 @@ router.delete('/:id',function(req, res, next) {
 // Function DELETE usuario
 async function deleteuUsuarioById(res, id){
     try {
-        var usuario = await usuario.findById(id);
+        var usuario = await Usuario.findById(id);
         if(usuario){
             if(usuario.destroy({where: {id: usuario.id}})){
                 res.status(204);

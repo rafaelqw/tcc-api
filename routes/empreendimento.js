@@ -166,4 +166,47 @@ async function deleteEmpreendimentosById(res,id){
         res.json({'msg':"Falha na requisição", 'error': error});
     }
 }
+
+// PUT Empreendimento by id_empreendimento
+router.put('/', function(req, res, next) {
+    if(Object.keys(req.body).length > 0){
+        AtualizarEmpreendimento(res, req.body);
+    }
+    else{
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
+    }
+});
+
+// Function PUT Empreendimento by id_empreendimento
+async function AtualizarEmpreendimento(res, data){
+    try {        
+            var empreendimento = await Empreendimento.update({
+                "nome": data.nome,
+                "descricao": data.descricao,
+                "cnpj": data.cnpj,
+                "cep": data.cep,
+                "logradouro": data.logradouro,
+                "numero": data.numero,
+                "bairro": data.bairro,
+                "id_estado": data.id_estado,
+                "id_municipio": data.id_municipio,
+                "id_segmento": data.id_segmento,
+                "id_porte": data.id_porte,
+                "id_cliente": data.id_cliente,
+                "complemento": data.complemento
+
+            },{
+                where:{ "id": data.id }
+            });
+    
+            res.status(200);
+            res.json(empreendimento);
+        
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
 module.exports = router;

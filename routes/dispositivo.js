@@ -124,4 +124,35 @@ async function getModelos(res){
     }
 }
 
+// PUT Dispositivo by id_dispositivo
+router.put('/', function(req, res, next) {
+    if(Object.keys(req.body).length > 0){
+        AtualizarDispositivo(res, req.body.dispositivo);
+    }
+    else{
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
+    }
+});
+
+// Function PUT Dispositivo by id_dispositivo
+async function AtualizarDispositivo(res, data){
+    try {        
+            var dispositivo = await Dispositivo.update({
+                "nome": data.nome,
+                "descricao": data.descricao,
+                "id_modelo": data.id_modelo
+            },{
+                where:{ "id": data.id }
+            });
+    
+            res.status(200);
+            res.json(dispositivo);
+        
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
 module.exports = router;
