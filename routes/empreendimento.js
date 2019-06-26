@@ -119,7 +119,8 @@ async function getEmpreendimentoByIdUsuario(res, id_usuario){
             sqlQuery += "INNER JOIN tbl_cliente as tc on tc.id = te.id_cliente ";
             sqlQuery += "LEFT JOIN tbl_pessoa_fisica pf on pf.id_cliente = tc.id ";
             sqlQuery += "LEFT JOIN tbl_pessoa_juridica pj on pj.id_cliente  = tc.id ";
-            sqlQuery += "where tue.id_usuario = " + id_usuario + " ;";
+            sqlQuery += "where tue.id_usuario = " + id_usuario + " ";
+            sqlQuery += " and pf.deletedAt is null and pj.deletedAt is null and te.deletedAt is null and tue.deletedAt is null ;";
 
         var empreendimentos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
 

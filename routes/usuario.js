@@ -96,9 +96,10 @@ router.get('/id_empreendimento/:id_empreendimento', function(req, res, next) {
 // Fuction GET usuarios by Empreendimento
 async function getUsuariosByEmpreendimento(res, id_empreendimento){
     try {
-        var sqlQuery =  "SELECT usu.id, usu.nome, usu.email FROM tbl_usuario AS usu ";
-            sqlQuery += "INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_usuario = usu.id ";
-            sqlQuery += "WHERE tue.id_empreendimento = " + id_empreendimento + " ;";
+        var sqlQuery =  " SELECT usu.id, usu.nome, usu.email FROM tbl_usuario AS usu ";
+            sqlQuery += " INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_usuario = usu.id ";
+            sqlQuery += " WHERE tue.id_empreendimento = " + id_empreendimento + " ";
+            sqlQuery += " AND tue.deletedAt is null AND usu.deletedAt is null ";
 
         var usuarios = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
 
@@ -110,6 +111,63 @@ async function getUsuariosByEmpreendimento(res, id_empreendimento){
             res.status(404);
             res.json({'msg':"Nenhum registro encontrado"});
         }
+    } catch (error) {
+        res.status(404);
+        res.json({'msg':"Falha na requisição", 'error': error});
+    }
+}
+
+// PUT Usuario by id_usuario
+router.put('/', function(req, res, next) {
+    if(Object.keys(req.body).length > 0){
+        AtualizarCliente(res, req.body);
+    }
+    else{
+        res.status(400);
+        res.json({'msg':"Corpo da requesição vazio"});
+    }
+});
+
+// Function PUT Usuario by id_usuario
+async function AtualizarCliente(res, data){
+    try {
+        var usuCadastrado = await Autenticacao.findOne({ where: {'email': data.email}});
+        if(!usuCadastrado){
+            var usuario = await Usuario.update({
+                "nome": data.nome,
+                "email": data.email
+            },{
+                where:{ "id": data.id }
+            });
+            
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(data.senha, salt);
+            
+            var autenticacao = await Autenticacao.update({
+                "email": data.email,
+                "senha": hash
+            },{
+                where:{ "id_usuario": data.id }
+            });
+    
+            await UsuarioEmpreendimento.destroy({where: {id_usuario: data.id}});
+    
+            for (let i = 0; i < data.empreendimentos.length; i++) {
+                var usuarioEmpreendimento = new UsuarioEmpreendimento();
+                usuarioEmpreendimento.id_usuario = data.id;
+                usuarioEmpreendimento.id_empreendimento = data.empreendimentos[i].id;
+                await usuarioEmpreendimento.save();
+            }
+    
+    
+            res.status(200);
+            res.json(usuario);
+        }
+        else{
+            res.status(409).json({'msg':"Email já cadastrado!"});
+        }
+
+        
     } catch (error) {
         res.status(404);
         res.json({'msg':"Falha na requisição", 'error': error});

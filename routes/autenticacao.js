@@ -84,11 +84,12 @@ async function getReceiver(id_usuario,tokenFCM){
 async function getEmpreendimentoByUsuario(id_usuario){
     var empreendimentos = [];
     try {
-        var sqlQuery =  "SELECT te.*, tep.porte, tes.segmento FROM tbl_empreendimento AS te ";
-            sqlQuery += "INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_empreendimento = te.id ";
-            sqlQuery += "INNER JOIN tbl_empreendimento_porte as tep on tep.id = te.id_porte ";
-            sqlQuery += "INNER JOIN tbl_empreendimento_segmento as tes on tes.id = te.id_segmento ";
-            sqlQuery += "where tue.id_usuario = " + id_usuario + " ;";
+        var sqlQuery =  " SELECT te.*, tep.porte, tes.segmento FROM tbl_empreendimento AS te ";
+            sqlQuery += " INNER JOIN tbl_usuario_empreendimento AS tue ON tue.id_empreendimento = te.id ";
+            sqlQuery += " INNER JOIN tbl_empreendimento_porte as tep on tep.id = te.id_porte ";
+            sqlQuery += " INNER JOIN tbl_empreendimento_segmento as tes on tes.id = te.id_segmento ";
+            sqlQuery += " where tue.id_usuario = " + id_usuario + " ";
+            sqlQuery += " AND te.deletedAt is null AND tue.deletedAt is null ;";
 
         var empreendimentos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
 
