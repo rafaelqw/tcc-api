@@ -29,9 +29,10 @@ router.post('/', function(req, res, next) {
 
 async function loginUsuario(res, data, headers){
     try {
-        var sqlQuery =  "SELECT ta.id, ta.id_usuario, tu.nome, ta.senha FROM tbl_autenticacao AS ta ";
-            sqlQuery += "INNER JOIN tbl_usuario AS tu ON tu.id = ta.id_usuario ";
-            sqlQuery += "WHERE ta.email = '"+data.email+"'";
+        var sqlQuery =  " SELECT ta.id, ta.id_usuario, tu.nome, ta.senha FROM tbl_autenticacao AS ta ";
+            sqlQuery += " INNER JOIN tbl_usuario AS tu ON tu.id = ta.id_usuario ";
+            sqlQuery += " WHERE ta.email = '"+data.email+"' ";
+            sqlQuery += "   AND ta.deletedAt is null AND tu.deletedAt is null";
 
         var aut = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
         aut = aut[0];

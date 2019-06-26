@@ -77,8 +77,9 @@ async function getSensoresbyId(res, id_empreendimento, id_sensor){
             sqlQuery += "INNER JOIN tbl_dispositivo AS td ON td.id = ts.id_dispositivo ";
             sqlQuery += "INNER JOIN tbl_empreendimento AS te ON te.id = td.id_empreendimento ";
             sqlQuery += "INNER JOIN tbl_tipo_sensor AS tts ON tts.id = ts.id_tipo_sensor ";
-            sqlQuery += "WHERE te.id = " + id_empreendimento;
-            sqlQuery += "  AND ts.id = " + id_sensor;
+            sqlQuery += "WHERE te.id = " + id_empreendimento + " ";
+            sqlQuery += "  AND ts.id = " + id_sensor + " ";
+            sqlQuery += "  AND ts.deletedAt is null AND td.deletedAt is null AND te.deletedAt is null ";
 
         var sensores = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
 
@@ -108,7 +109,8 @@ async function getSensoresbyEmpreendimento(res, id_empreendimento){
             sqlQuery += "INNER JOIN tbl_dispositivo AS td ON td.id = ts.id_dispositivo "
             sqlQuery += "INNER JOIN tbl_empreendimento AS te ON te.id = td.id_empreendimento "
             sqlQuery += "INNER JOIN tbl_tipo_sensor AS tts ON tts.id = ts.id_tipo_sensor ";
-            sqlQuery += "WHERE te.id = " + id_empreendimento + ";"
+            sqlQuery += "WHERE te.id = " + id_empreendimento + " ";
+            sqlQuery += "  AND ts.deletedAt is null AND td.deletedAt is null AND te.deletedAt is null ";
 
         var sensores = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
 
@@ -138,8 +140,9 @@ async function getSensoresbyDispositivo(res, id_empreendimento, id_dispositivo){
             sqlQuery += "INNER JOIN tbl_dispositivo AS td ON td.id = ts.id_dispositivo ";
             sqlQuery += "INNER JOIN tbl_empreendimento AS te ON te.id = td.id_empreendimento ";
             sqlQuery += "INNER JOIN tbl_tipo_sensor AS tts ON tts.id = ts.id_tipo_sensor ";
-            sqlQuery += "WHERE te.id = " + id_empreendimento;
-            sqlQuery += "   AND td.id = " + id_dispositivo + ";";
+            sqlQuery += "WHERE te.id = " + id_empreendimento + " ";
+            sqlQuery += "   AND td.id = " + id_dispositivo + " ";
+            sqlQuery += "  AND ts.deletedAt is null AND td.deletedAt is null AND te.deletedAt is null ";
 
         var sensores = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
 

@@ -54,6 +54,7 @@ async function getDispositivos(res, id_empreendimento){
             sqlQuery += " LEFT JOIN tbl_sensor AS ts ON ts.id_dispositivo = td.id ";
             sqlQuery += " INNER JOIN tbl_modelo_dispositivos AS tmd ON tmd.id = td.id_modelo ";
             sqlQuery += " WHERE td.id_empreendimento = " + id_empreendimento + " ";
+            sqlQuery += "   AND td.deletedAt is null AND ts.deletedAt is null ";
             sqlQuery += " GROUP BY td.id;";
 
         var dispositivos = await models.sequelize.query(sqlQuery, { type: models.sequelize.QueryTypes.SELECT});
